@@ -106,36 +106,33 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
 
     let xColorScale = d3.scaleBand()
         .domain(tempArray)
-        .range([0 + padding, w / 3])
+        .range([0, w / 3])
 
     let xColorAxis = d3.axisBottom(xColorScale)
 
-    svg.append("g")
+    // G FOR LEGEND
+    let legend = svg.append("g")
+        .attr("id", "legend")
+        .attr("transform", `translate(${padding},${h - 25})`)
+
+    legend.append("g")
         .attr("id", "x-color-axis")
-        .attr("transform", "translate(0," + (h - paddingBottom + 70) + ")")
+        .attr("transform", `translate(${0},${0})`)
         .call(xColorAxis)
 
-    // Y AXIS FOR COLORS
-    let yColorScale = d3.scaleBand()
-        .domain([0, 1])
-        .range([520, h - paddingBottom + 70])
+    // APPEND RECTS WITH COLORS
+    let tempArray2 = [2.8, 3.9, 5.0, 6.1, 7.2, 8.3, 9.5, 10.6, 11.7];
 
-    let yColorAxis = d3.axisLeft(yColorScale)
-
-    svg.append("g")
-        .attr("id", "y-color-axis")
-        .attr("transform", "translate(" + padding + ",0)")
-        .call(yColorAxis)
-
-    // APPEND COLORS FOR THE LEGEND
-    for (let x = 0; x < tempArray.length - 1; x++) {
-        svg.append("rect")
-            .attr("x", `${xColorScale(tempArray[x]) + 18}`)
-            .attr("y", `${yColorScale(1)}`)
-            .attr("width", xColorScale.bandwidth(tempArray[x]))
-            .attr("height", yColorScale.bandwidth(0))
-            .attr("fill", tempPalete[x + 1])
-            .attr("stroke", "black")
-    }
+    legend.selectAll("rect")
+        .data(tempArray2)
+        .enter()
+        .append("rect")
+        .attr("x", (d) => xColorScale(d) + 22)
+        .attr("y", -25)
+        .attr("width", xColorScale.bandwidth())
+        .attr("height", 25)
+        .attr("fill", (d) => colorVariation(d))
+        .attr("stroke", "black")
+        .attr("stroke-width", 1)  
 
 })
