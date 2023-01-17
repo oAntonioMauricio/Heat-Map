@@ -32,12 +32,12 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
 
     // Y AXIS
     let yScale = d3.scaleBand()
-        .domain([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
+        .domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
         .range([0 + padding, h - padding])
 
     let yAxis = d3.axisLeft(yScale)
         .tickFormat(x => {
-            let date = new Date(0, x - 1)
+            let date = new Date(0, x)
             let format = d3.utcFormat('%B');
             return format(date)
         })
@@ -46,5 +46,59 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
         .attr("id", "y-axis")
         .attr("transform", "translate(" + padding + ",0)")
         .call(yAxis)
+
+    // COLOR PALETE FOR TEMP
+
+    let tempPalete = ["blue", "#1984c5", "#22a7f0", "#63bff0", "#a7d5ed", "#e2e2e2", "#e1a692", "#de6e56", "#e14b31", "#c23728", "red"];
+    let baseTemp = data.baseTemperature
+
+    // FUNCTION TO ROUND THE TEMP
+    function tempVariation(baseTemp, x) {
+        let variation = baseTemp + x;
+
+        return Number.parseFloat(variation).toFixed(1)
+    }
+
+    function colorVariation(temp) {
+        if (temp < 2.8) {
+            return tempPalete[0]
+        } else if (temp >= 2.8 && temp < 3.9) {
+            return tempPalete[1]
+        } else if (temp >= 3.9 && temp < 5.0) {
+            return tempPalete[2]
+        } else if (temp >= 5.0 && temp < 6.1) {
+            return tempPalete[3]
+        } else if (temp >= 6.1 && temp < 7.2) {
+            return tempPalete[4]
+        } else if (temp >= 7.2 && temp < 8.3) {
+            return tempPalete[5]
+        } else if (temp >= 8.3 && temp < 9.5) {
+            return tempPalete[6]
+        } else if (temp >= 9.5 && temp < 10.6) {
+            return tempPalete[7]
+        } else if (temp >= 10.6 && temp < 11.7) {
+            return tempPalete[8]
+        } else if (temp >= 11.7 && temp < 12.8) {
+            return tempPalete[9]
+        } else {
+            return tempPalete[10]
+        }
+    }
+
+    // RECTS
+    svg.selectAll("rect")
+        .data(data.monthlyVariance)
+        .enter()
+        .append("rect")
+        .attr("class", "cell")
+        .attr("x", (d) => xScale(new Date(d.year, 0)))
+        .attr("y", (d) => yScale(d.month - 1))
+        .attr("data-month", (d) => d.month - 1)
+        .attr("data-year", (d) => d.year)
+        .attr("data-temp", (d) => baseTemp + d.variance)
+        .attr("width", 5)
+        .attr("height", d => yScale.bandwidth(d.month - 1))
+        .attr("fill", (d) => colorVariation(tempVariation(baseTemp, d.variance)))
+        .attr("stroke", "white")
 
 })
