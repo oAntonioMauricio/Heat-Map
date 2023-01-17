@@ -1,6 +1,7 @@
 const w = 1300;
 const h = 600;
-const padding = 60;
+const padding = 70;
+const paddingBottom = 100;
 
 // CREATE SVG
 const svg = d3.select("#holder")
@@ -27,13 +28,13 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
 
     svg.append("g")
         .attr("id", "x-axis")
-        .attr("transform", "translate(0," + (h - padding) + ")")
+        .attr("transform", "translate(0," + (h - paddingBottom) + ")")
         .call(xAxis)
 
     // Y AXIS
     let yScale = d3.scaleBand()
         .domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
-        .range([0 + padding, h - padding])
+        .range([0 + padding, h - paddingBottom])
 
     let yAxis = d3.axisLeft(yScale)
         .tickFormat(x => {
@@ -96,9 +97,44 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
         .attr("data-month", (d) => d.month - 1)
         .attr("data-year", (d) => d.year)
         .attr("data-temp", (d) => baseTemp + d.variance)
-        .attr("width", 5)
-        .attr("height", d => yScale.bandwidth(d.month - 1))
+        .attr("width", `${w / (2015 - 1753)}`)
+        .attr("height", (d) => yScale.bandwidth(d.month - 1))
         .attr("fill", (d) => colorVariation(tempVariation(baseTemp, d.variance)))
         .attr("stroke", "white")
+
+    // X AXIS FOR COLORS
+    let tempArray = [2.8, 3.9, 5.0, 6.1, 7.2, 8.3, 9.5, 10.6, 11.7, 12.8];
+
+    let xColorScale = d3.scaleBand()
+        .domain(tempArray)
+        .range([0 + padding, w / 3])
+
+    let xColorAxis = d3.axisBottom(xColorScale)
+
+    svg.append("g")
+        .attr("id", "legend")
+        .attr("transform", "translate(0," + (h - paddingBottom + 70) + ")")
+        .call(xColorAxis)
+
+    // Y AXIS FOR COLORS
+    let yColorScale = d3.scaleBand()
+        .domain([0, 1])
+        .range([520, h - paddingBottom + 70])
+
+    let yColorAxis = d3.axisLeft(yColorScale)
+
+    svg.append("g")
+        .attr("id", "y-color-axis")
+        .attr("transform", "translate(" + padding + ",0)")
+        .call(yColorAxis)
+
+    // APPEND COLORS FOR THE LEGEND
+    svg.append("rect")
+        .attr("x", `${xColorScale(2.8) + 18}`)
+        .attr("y", `${yColorScale(1)}`)
+        .attr("width", xColorScale.bandwidth(2.8))
+        .attr("height", yColorScale.bandwidth(0))
+        .attr("fill", "black")
+        .attr("stroke", "black")
 
 })
