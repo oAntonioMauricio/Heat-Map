@@ -100,7 +100,6 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
         .attr("width", `${w / (2015 - 1753)}`)
         .attr("height", (d) => yScale.bandwidth(d.month - 1))
         .attr("fill", (d) => colorVariation(tempVariation(baseTemp, d.variance)))
-        .attr("stroke", "white")
 
     // X AXIS FOR COLORS
     let tempArray = [2.8, 3.9, 5.0, 6.1, 7.2, 8.3, 9.5, 10.6, 11.7, 12.8];
@@ -112,7 +111,7 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
     let xColorAxis = d3.axisBottom(xColorScale)
 
     svg.append("g")
-        .attr("id", "legend")
+        .attr("id", "x-color-axis")
         .attr("transform", "translate(0," + (h - paddingBottom + 70) + ")")
         .call(xColorAxis)
 
@@ -129,12 +128,14 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
         .call(yColorAxis)
 
     // APPEND COLORS FOR THE LEGEND
-    svg.append("rect")
-        .attr("x", `${xColorScale(2.8) + 18}`)
-        .attr("y", `${yColorScale(1)}`)
-        .attr("width", xColorScale.bandwidth(2.8))
-        .attr("height", yColorScale.bandwidth(0))
-        .attr("fill", "black")
-        .attr("stroke", "black")
+    for (let x = 0; x < tempArray.length - 1; x++) {
+        svg.append("rect")
+            .attr("x", `${xColorScale(tempArray[x]) + 18}`)
+            .attr("y", `${yColorScale(1)}`)
+            .attr("width", xColorScale.bandwidth(tempArray[x]))
+            .attr("height", yColorScale.bandwidth(0))
+            .attr("fill", tempPalete[x + 1])
+            .attr("stroke", "black")
+    }
 
 })
