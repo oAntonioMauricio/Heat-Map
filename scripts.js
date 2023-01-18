@@ -106,9 +106,9 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
     // Its opacity is set to 1: we can now see it.
     let mouseover = function (d) {
         tooltip
-            .style("opacity", 1)
+            .style("opacity", 0.9)
         tooltip
-            .html(`${d.year} ${translateMonth(d.month - 1)}</br> ${tempVariation(baseTemp, d.variance)}ºC</br>${Number.parseFloat(d.variance).toFixed(1)}`)
+            .html(`${d.year} - ${translateMonth(d.month - 1)}</br> ${tempVariation(baseTemp, d.variance)}ºC</br>${Number.parseFloat(d.variance).toFixed(1)}ºC`)
             .style("left", (d3.event.pageX + 10) + "px")
             .style("top", (d3.event.pageY - 40) + "px")
             .attr("data-year", `${d.year}`)
