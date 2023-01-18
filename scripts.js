@@ -15,16 +15,23 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
     // X AXIS
     let timeArray = data.monthlyVariance.map(x => new Date(x.year, x.month - 1))
 
-    let minTime = d3.min(timeArray)
-    let maxTime = d3.max(timeArray)
+    let minTime = d3.min(timeArray).getFullYear();
+    let maxTime = d3.max(timeArray).getFullYear();
 
-    let xScale = d3.scaleTime()
-        .domain([minTime, maxTime])
+    let yearsArray = [];
+
+    for (let x = minTime; x <= maxTime; x++) {
+        yearsArray.push(x)
+    }
+
+    console.log(yearsArray)
+
+    let xScale = d3.scaleBand()
+        .domain(yearsArray)
         .range([0 + padding, w - padding])
 
     let xAxis = d3.axisBottom(xScale)
-        .tickFormat(d3.timeFormat("%Y"))
-        .ticks(26)
+        .tickValues(yearsArray.filter(x => x % 10 === 0))
 
     svg.append("g")
         .attr("id", "x-axis")
@@ -122,12 +129,12 @@ d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/mas
         .enter()
         .append("rect")
         .attr("class", "cell")
-        .attr("x", (d) => xScale(new Date(d.year, 0)))
+        .attr("x", (d) => xScale(d.year))
         .attr("y", (d) => yScale(d.month - 1))
         .attr("data-month", (d) => d.month - 1)
         .attr("data-year", (d) => d.year)
         .attr("data-temp", (d) => baseTemp + d.variance)
-        .attr("width", `${w / (2015 - 1753)}`)
+        .attr("width", xScale.bandwidth())
         .attr("height", (d) => yScale.bandwidth(d.month - 1))
         .attr("fill", (d) => colorVariation(tempVariation(baseTemp, d.variance)))
         .on("mouseover", mouseover)
